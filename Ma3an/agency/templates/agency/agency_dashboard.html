@@ -16,12 +16,10 @@
             <!-- Recent Tours -->
             <div>
                 <h3>Tours</h3>
-                <a href="{% url 'all_tours' %}"><button>View All →</button></a>
+                <a href="{% url 'all_tours' %}"><button>All Tours →</button></a>
             </div>
             <li>
-                <a href="{% url 'all_tour_guides' %}">
-                    <button>TourGuides</button>
-                </a>
+                <a href="{% url 'all_tour_guides' %}"><button>Tour Guides</button></a>
             </li>
             <li><button>Travelers</button></li>
             <li><button>Reports</button></li>
@@ -41,18 +39,19 @@
         <!-- Quick Add Buttons -->
         <div>
             <h2>Organize Your Upcoming Trips</h2>
-            <button onclick="location.href='add_tour.html'">+ Add Tour</button>
-            <button onclick="location.href='add_tour_guide.html'">+ Add TourGuide</button>
+            
+                 <a href="{% url 'add_tour_guide' %}"><button>+ Add Tour</button></a>
+            <a href="{% url 'all_tour_guides' %}"><button>+ Add TourGuides</button></a>
         </div>
 
         <!-- Stats Cards -->
         <div>
             <h2>Statistics</h2>
             <ul>
-                <li><strong>Upcoming Tours:</strong> (num)</li>
-                <li><strong>Active Tours:</strong> (num)</li>
-                <li><strong>TourGuides:</strong> (num)</li>
-                <li><strong>Total Travelers:</strong> (num)</li>
+                <li><strong>Upcoming Tours:</strong> </li>
+                <li><strong>Active Tours:</strong> </li>
+                <li><strong>TourGuides:</strong> </li>
+                <li><strong>Travelers:</strong></li>
             </ul>
         </div>
 

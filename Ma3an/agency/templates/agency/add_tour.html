@@ -29,20 +29,16 @@
         <div class="col-md-8">
             <div class="card p-4">
                 <h4 class="mb-4">Create New Tour</h4>
-
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-
                     <div class="mb-3">
                         <label class="form-label">Tour Name</label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Description</label>
                         <textarea name="description" class="form-control" rows="3" required></textarea>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">Country</label>
@@ -53,7 +49,6 @@
                             <input type="text" name="city" class="form-control" required>
                         </div>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">Travelers</label>
@@ -64,7 +59,6 @@
                             <input type="number" name="price" class="form-control" required>
                         </div>
                     </div>
-
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">Start Date</label>
@@ -75,27 +69,29 @@
                             <input type="date" name="end_date" class="form-control" required>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">TourGuide</label>
                         <select name="tour_guide" class="form-select" required>
                             <option value="">Select TourGuide</option>
-                            {% for tour_guide in tour_guides %}
-                                <option value="{{ tour_guide.id }}">{{ tour_guide.user.username }}</option>
-                            {% endfor %}
+                            {% for guide in guides %}
+    <option value="{{ guide.id }}">{{ guide.user.username }}</option>
+{% endfor %}
+
                         </select>
                     </div>
-
                     <div class="mb-4">
                         <label class="form-label">Tour Image</label>
                         <input type="file" name="image" class="form-control" required>
                     </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Create Tour</button>
+                 <button type="submit" class="btn btn-success w-100">Next ➜</button>
                 </form>
             </div>
         </div>
     </div>
+</div>
+
+<div class="mb-3">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
 </div>
 
 </body>

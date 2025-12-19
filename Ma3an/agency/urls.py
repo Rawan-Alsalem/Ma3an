@@ -7,7 +7,6 @@ urlpatterns = [
     path('subscription/', views.subscription_view, name='subscription'),
     path('add-tour/', views.add_tour_view, name='add_tour'),
     path('all-tours/', views.all_tours_view, name='all_tours'),
-    path('save-tour/', views.save_tour_view, name='save_tour'),
 
     # TourGuide URLs
     path('add_tour_guide/', views.add_tour_guide_view, name='add_tour_guide'),
@@ -20,4 +19,8 @@ urlpatterns = [
 
     # Payment
     path('subscription/payment/', views.agency_payment_view, name='agency_payment'),
+
+
+    path('tour/<int:tour_id>/add-schedule/', views.add_schedule_view, name='add_schedule'),
+
 ]
