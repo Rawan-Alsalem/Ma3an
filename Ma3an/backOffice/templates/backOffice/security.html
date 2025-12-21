@@ -1,0 +1,21 @@
+{% extends 'backOffice/base.html' %}
+{% block content %}
+
+<h3>System Security</h3>
+
+<ul class="list-group shadow">
+    <li class="list-group-item d-flex justify-content-between">
+        Two Factor Authentication <span class="badge bg-success">Enabled</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+        SSL Certificate <span class="badge bg-success">Valid</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+        Data Encryption <span class="badge bg-success">Active</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+        Backup Frequency <span class="badge bg-info">Daily</span>
+    </li>
+</ul>
+
+{% endblock %}
