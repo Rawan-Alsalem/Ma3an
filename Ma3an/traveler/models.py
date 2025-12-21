@@ -13,7 +13,7 @@ class Traveler(models.Model):
 
 class TourJoin(models.Model):
     traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
-    tour = models.ForeignKey("tours.Tour", on_delete=models.CASCADE)
+    # tour = models.ForeignKey("tours.Tour", on_delete=models.CASCADE)
 
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -27,7 +27,7 @@ class TourJoin(models.Model):
 
 class Review(models.Model):
     traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
-    tour = models.ForeignKey("tours.Tour", on_delete=models.CASCADE)
+    # tour = models.ForeignKey("tours.Tour", on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
