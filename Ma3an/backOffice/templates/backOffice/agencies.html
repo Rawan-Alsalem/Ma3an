@@ -1,0 +1,37 @@
+{% extends 'backOffice/base.html' %}
+{% block content %}
+
+<h3>Manage Agencies</h3>
+
+<table class="table table-striped shadow">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>License</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for agency in agencies %}
+        <tr>
+            <td>{{ agency.name }}</td>
+            <td>{{ agency.license_number }}</td>
+            <td>
+                {% if agency.approved %}
+                    <span class="badge bg-success">Approved</span>
+                {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if not agency.approved %}
+                    <a href="{% url 'approve_agency' agency.id %}" class="btn btn-sm btn-primary">Approve</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
