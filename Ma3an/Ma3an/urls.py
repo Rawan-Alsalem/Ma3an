@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("main.urls")),
-    path('agency/', include('agency.urls')), # الوكالة
+path('agency/', include(('agency.urls', 'agency'), namespace='agency')), # الوكالة
 ]
 
 if settings.DEBUG:

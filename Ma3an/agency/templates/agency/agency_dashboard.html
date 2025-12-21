@@ -16,10 +16,10 @@
             <!-- Recent Tours -->
             <div>
                 <h3>Tours</h3>
-                <a href="{% url 'all_tours' %}"><button>All Tours →</button></a>
+                <a href="{% url 'agency:all_tours' %}"><button>All Tours →</button></a>
             </div>
             <li>
-                <a href="{% url 'all_tour_guides' %}"><button>Tour Guides</button></a>
+                <a href="{% url 'agency:all_tour_guides' %}"><button>Tour Guides</button></a>
             </li>
             <li><button>Travelers</button></li>
             <li><button>Reports</button></li>
@@ -40,8 +40,8 @@
         <div>
             <h2>Organize Your Upcoming Trips</h2>
             
-                 <a href="{% url 'add_tour_guide' %}"><button>+ Add Tour</button></a>
-            <a href="{% url 'all_tour_guides' %}"><button>+ Add TourGuides</button></a>
+            <a href="{% url 'agency:add_tour' %}"><button>+ Add Tour</button></a>
+            <a href="{% url 'agency:add_tour_guide' %}"><button>+ Add TourGuides</button></a>
         </div>
 
         <!-- Stats Cards -->
@@ -64,12 +64,12 @@
         <!-- Recent Tours -->
         <div>
             <h3>Tours</h3>
-            <a href="{% url 'all_tours' %}"><button>View All →</button></a>
+            <a href="{% url 'agency:all_tours' %}"><button>View All →</button></a>
         </div>
 
         <div>
             <h3>Tour Guide Group</h3>
-            <button>View All →</button>
+            <a href="{% url 'agency:all_tour_guides' %}"><button>View All →</button></a>
         </div>
 
         <!-- Recent Alerts -->

@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.models import User
-from datetime import timedelta
-
 from .models import Tour, TourGuide, TourSchedule
-from .forms import TourForm
+from datetime import datetime
 
 
 # -------------------------
@@ -41,6 +39,40 @@ def all_tour_guides_view(request):
     return render(request, 'agency/all_tour_guides.html', {'tour_guides': tour_guides})
 
 
+# ✏️ Edit Tour Guide
+def edit_tour_guide_view(request, pk):
+    tour_guide = get_object_or_404(TourGuide, pk=pk)
+    user = tour_guide.user
+
+    if request.method == "POST":
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        user.save()
+
+        messages.success(request, "Tour Guide updated successfully")
+        return redirect('all_tour_guides')
+
+    return render(request, 'agency/edit_tour_guide.html', {
+        'tour_guide': tour_guide
+    })
+
+
+# 🗑️ Delete Tour Guide
+def delete_tour_guide_view(request, pk):
+    tour_guide = get_object_or_404(TourGuide, pk=pk)
+    user = tour_guide.user
+
+    if request.method == "POST":
+        user.delete()
+        messages.success(request, "Tour Guide deleted successfully")
+        return redirect('all_tour_guides')
+
+    return render(request, 'agency/delete_tour_guide.html', {
+        'tour_guide': tour_guide
+    })
+
+
 # -------------------------
 # Agency Views
 # -------------------------
@@ -61,41 +93,120 @@ def agency_payment_view(request):
 # -------------------------
 def add_tour_view(request):
     guides = TourGuide.objects.all()
+    available_guides = guides
+
+    # نقرأ التواريخ من GET (مو POST)
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    start_date = end_date = None
+
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "❌ تنسيق التواريخ غير صحيح")
+            start_date = end_date = None
+
+        if start_date and end_date:
+            if start_date > end_date:
+                messages.error(request, "❌ تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية")
+            else:
+                # تصفية المرشدين فقط بعد اختيار التاريخ
+                available_guides = [
+                    g for g in guides if g.is_available(start_date, end_date)
+                ]
 
     if request.method == "POST":
-        tour_guide_id = request.POST.get('tour_guide')
-        tour_guide = TourGuide.objects.filter(id=tour_guide_id).first() if tour_guide_id else None
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        country = request.POST.get('country')
+        city = request.POST.get('city')
+        travelers = int(request.POST.get('travelers') or 0)
+        price = float(request.POST.get('price') or 0)
 
-        tour = Tour.objects.create(
-            name=request.POST.get('name'),
-            description=request.POST.get('description'),
-            country=request.POST.get('country'),
-            city=request.POST.get('city'),
-            travelers=request.POST.get('travelers') or 0,
-            price=request.POST.get('price') or 0,
-            start_date=request.POST.get('start_date'),
-            end_date=request.POST.get('end_date'),
+        try:
+            start_date = datetime.strptime(request.POST.get('start_date'), "%Y-%m-%d").date()
+            end_date = datetime.strptime(request.POST.get('end_date'), "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "❌ تنسيق التواريخ غير صحيح")
+            return render(request, 'agency/add_tour.html', {
+                'guides': available_guides,
+                'name': name,
+                'description': description,
+                'country': country,
+                'city': city,
+                'travelers': travelers,
+                'price': price,
+                'start_date': request.POST.get('start_date'),
+                'end_date': request.POST.get('end_date'),
+            })
+
+        if start_date > end_date:
+            messages.error(request, "❌ تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية")
+            return render(request, 'agency/add_tour.html', {
+                'guides': available_guides,
+                'name': name,
+                'description': description,
+                'country': country,
+                'city': city,
+                'travelers': travelers,
+                'price': price,
+                'start_date': request.POST.get('start_date'),
+                'end_date': request.POST.get('end_date'),
+            })
+
+        tour_guide = get_object_or_404(TourGuide, id=request.POST.get('tour_guide'))
+
+        # حماية إضافية
+        if not tour_guide.is_available(start_date, end_date):
+            messages.error(request, "❌ هذا المرشد لديه رحلة في نفس التاريخ")
+            return render(request, 'agency/add_tour.html', {
+                'guides': available_guides,
+                'name': name,
+                'description': description,
+                'country': country,
+                'city': city,
+                'travelers': travelers,
+                'price': price,
+                'start_date': request.POST.get('start_date'),
+                'end_date': request.POST.get('end_date'),
+            })
+
+        # إنشاء الرحلة
+        Tour.objects.create(
+            name=name,
+            description=description,
+            country=country,
+            city=city,
+            travelers=travelers,
+            price=price,
+            start_date=start_date,
+            end_date=end_date,
             tour_guide=tour_guide
         )
 
-        if 'image' in request.FILES:
-            tour.image = request.FILES['image']
-            tour.save()
+        messages.success(request, "✅ تم إنشاء الرحلة")
+        return redirect('all_tours')
 
-        messages.success(request, '✅ Tour saved successfully!')
-        return redirect('add_schedule', tour_id=tour.id)
-
-    return render(request, 'agency/add_tour.html', {'guides': guides})
+    return render(request, 'agency/add_tour.html', {
+        'guides': available_guides,
+        'start_date': start_date_str,
+        'end_date': end_date_str,
+    })
 
 
 def all_tours_view(request):
     tours = Tour.objects.all()
-
-    # نحسب عدد الأيام لكل تور (اختياري)
+    tours_with_duration = []
     for tour in tours:
-        tour.total_days = (tour.end_date - tour.start_date).days + 1
-
-    return render(request, 'agency/all_tours.html', {'tours': tours})
+        duration_days = (tour.end_date - tour.start_date).days + 1
+        tours_with_duration.append({
+            'tour': tour,
+            'duration': duration_days
+        })
+    return render(request, 'agency/all_tours.html', {'tours': tours_with_duration})
 
 
 def edit_tour_view(request, tour_id):

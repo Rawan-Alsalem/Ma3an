@@ -57,11 +57,14 @@
         </form>
 
         <p class="text-gray-500 text-sm mt-4 text-center">Secure payment. We do not store your card details.</p>
-    </div>
-</div>
 
-<div class="mb-3">
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+        <!-- Back to Dashboard -->
+        <div class="mt-4 text-center">
+            <a href="{% url 'agency:dashboard' %}" class="text-blue-600 hover:underline">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+    </div>
 </div>
 
 </body>

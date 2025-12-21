@@ -1,6 +1,7 @@
-# agency/urls.py
 from django.urls import path
 from . import views
+
+app_name = 'agency'  # هذا ضروري إذا تريد تستخدم namespace
 
 urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -12,6 +13,10 @@ urlpatterns = [
     path('add_tour_guide/', views.add_tour_guide_view, name='add_tour_guide'),
     path('all_tour_guides/', views.all_tour_guides_view, name='all_tour_guides'),
 
+    # Edit & Delete TourGuide
+    path('tour_guide/edit/<int:pk>/', views.edit_tour_guide_view, name='edit_tour_guide'),
+    path('tour_guide/delete/<int:pk>/', views.delete_tour_guide_view, name='delete_tour_guide'),
+
     # Tour management
     path('tour/edit/<int:tour_id>/', views.edit_tour_view, name='edit_tour'),
     path('tour/delete/<int:tour_id>/', views.delete_tour_view, name='delete_tour'),
@@ -20,7 +25,5 @@ urlpatterns = [
     # Payment
     path('subscription/payment/', views.agency_payment_view, name='agency_payment'),
 
-
     path('tour/<int:tour_id>/add-schedule/', views.add_schedule_view, name='add_schedule'),
-
 ]
