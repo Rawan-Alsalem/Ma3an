@@ -72,13 +72,7 @@ class Agency(models.Model):
         choices=ApprovalStatus.choices,
         default=ApprovalStatus.PENDING
     )
-    # subscription = models.ForeignKey(
-    #     Subscription,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True
-    # )
-    # rejected = models.BooleanField(default=False)
+    # subscription = models.ForeignKey("agency.Subscription", on_delete=models.SET_NULL, null=True, blank=True)
     rejection_reason = models.TextField(null=True, blank=True)
 
 
