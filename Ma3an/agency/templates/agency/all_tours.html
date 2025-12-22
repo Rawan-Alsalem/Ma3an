@@ -2,26 +2,25 @@
 {% load static %}
 
 {% block content %}
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/agency.css' %}">
 
-<div class="container">
-    <div class="page-title-section">
-        <h1>Explore Our Tours</h1>
-        <p>Discover amazing destinations and create unforgettable memories</p>
+<div class="container py-5">
+    <div class="page-title-section text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #1a202c;">Explore Our Tours</h1>
+        <p class="text-muted">Discover amazing destinations and create unforgettable memories</p>
     </div>
 
-    <!-- Filter Section -->
-    <div class="filter-section">
-        <form method="get" class="filter-controls">
-            <div class="filter-item">
-                <label>Search</label>
-                <input type="text" name="search" placeholder="Search tours..." value="{{ request.GET.search }}">
+    <div class="filter-section mb-5 p-4 bg-white shadow-sm" style="border-radius: 20px;">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-secondary">Search</label>
+                <input type="text" name="search" class="form-control border-0 bg-light rounded-3" placeholder="Search tours..." value="{{ request.GET.search }}">
             </div>
 
-            <div class="filter-item">
-                <label>Destination</label>
-                <select name="destination" onchange="this.form.submit()">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-secondary">Destination</label>
+                <select name="destination" class="form-select border-0 bg-light rounded-3" onchange="this.form.submit()">
                     <option value="">All Destinations</option>
                     {% for city in cities %}
                         <option value="{{ city }}" {% if selected_destination == city %}selected{% endif %}>{{ city }}</option>
@@ -29,9 +28,9 @@
                 </select>
             </div>
 
-            <div class="filter-item">
-                <label>Duration</label>
-                <select name="duration" onchange="this.form.submit()">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-secondary">Duration</label>
+                <select name="duration" class="form-select border-0 bg-light rounded-3" onchange="this.form.submit()">
                     <option value="">All Durations</option>
                     <option value="1-3" {% if selected_duration == '1-3' %}selected{% endif %}>1-3 Days</option>
                     <option value="4-7" {% if selected_duration == '4-7' %}selected{% endif %}>4-7 Days</option>
@@ -39,9 +38,9 @@
                 </select>
             </div>
 
-            <div class="filter-item">
-                <label>Price Range</label>
-                <select name="price_range" onchange="this.form.submit()">
+            <div class="col-md-3">
+                <label class="form-label fw-bold small text-secondary">Price Range</label>
+                <select name="price_range" class="form-select border-0 bg-light rounded-3" onchange="this.form.submit()">
                     <option value="">All Prices</option>
                     <option value="0-1000" {% if selected_price_range == '0-1000' %}selected{% endif %}>Under 1000 SAR</option>
                     <option value="1000-5000" {% if selected_price_range == '1000-5000' %}selected{% endif %}>1000-5000 SAR</option>
@@ -51,45 +50,64 @@
         </form>
     </div>
 
-    <!-- Tours Grid -->
-    <div class="tours-grid">
+    <div class="row g-4">
         {% for item in tours %}
-        <div class="tour-card">
-            <div class="tour-image">
-                {% if item.tour.image %}
-                    <img src="{{ item.tour.image.url }}" alt="{{ item.tour.name }}">
-                {% else %}
-                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.tour.name }}">
-                {% endif %}
-            </div>
-            <div class="tour-content">
-                <h3 class="tour-title">{{ item.tour.name }}</h3>
-                <div class="tour-meta">
-                    <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ item.tour.city }}, {{ item.tour.country }}</span></div>
-                    <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ item.duration }} day{% if item.duration > 1 %}s{% endif %}</span></div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="tour-card-wrapper">
+                <div class="tour-card-new">
+                    <div class="card-image-container">
+                        {% if item.tour.image %}
+                            <img src="{{ item.tour.image.url }}" alt="{{ item.tour.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.tour.name }}">
+                        {% endif %}
+                        
+                        <div class="price-badge">
+                            {{ item.tour.price }} SAR <span class="per-night">/ Person</span>
+                        </div>
+
+                        <div class="card-info-overlay">
+    <div class="info-header mb-1">
+        <h3 class="card-title h5 mb-0 fw-bold" style="color: #ffffff !important;">{{ item.tour.name }}</h3>
+    </div>
+    
+    <div class="location small mb-2" style="color: #ffffff !important; opacity: 1 !important;">
+        <i class="fas fa-map-marker-alt me-1"></i> {{ item.tour.city }}, {{ item.tour.country }}
+    </div>
+
+    <div class="specs d-flex gap-3 small mb-3" style="color: #ffffff !important; opacity: 1 !important;">
+        <span><i class="far fa-calendar-alt me-1"></i> {{ item.duration }} Days</span>
+    </div>
+
+    <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-reserve">
+        <i class="fas fa-info-circle me-2"></i> Details
+    </a>
+</div>
+                    </div>
                 </div>
-                <div class="price-section">
-                    <div class="tour-price">{{ item.tour.price }} SAR<span class="person-price">/ person</span></div>
-                </div>
-                <div class="action-buttons">
-                    <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-book">Details</a>
-                    <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn-secondary-action">Edit</a>
-                    <a href="{% url 'agency:delete_tour' item.tour.id %}" class="btn-secondary-action">Delete</a>
+                
+                <div class="admin-actions mt-3 d-flex justify-content-center gap-2">
+                    <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn btn-sm btn-outline-secondary px-3 rounded-pill shadow-sm">
+                        <i class="fas fa-pen me-1"></i> Edit
+                    </a>
+                    <a href="{% url 'agency:delete_tour' item.tour.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill shadow-sm">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="no-tours">
-            <i class="fas fa-map-marked-alt fa-5x"></i>
-            <h4>No tours available yet</h4>
-            <p>Be the first to add an amazing tour experience!</p>
-            <a href="{% url 'agency:add_tour' %}" class="btn btn-primary">+ Create Your First Tour</a>
+        <div class="col-12 text-center py-5">
+            <div class="no-tours p-5 bg-white rounded-4 shadow-sm">
+                <i class="fas fa-map-marked-alt fa-5x text-light mb-4"></i>
+                <h4 class="fw-bold">No tours available yet</h4>
+                <p class="text-muted">Be the first to add an amazing tour experience!</p>
+                <a href="{% url 'agency:add_tour' %}" class="btn btn-success rounded-pill px-5 py-2 fw-bold">+ Create Your First Tour</a>
+            </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-
 {% endblock %}
