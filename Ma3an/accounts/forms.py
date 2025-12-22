@@ -18,7 +18,16 @@ class AgencyForm(forms.ModelForm):
         model = Agency
         fields = ["agency_name", "phone_number", "city", "commercial_license"]
 
+class TourGuideCreateForm(forms.Form):
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.EmailInput(attrs={"placeholder": "Tour guide email"})
+    )
 
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"placeholder": "Temporary password"})
+    )
 
 
 # from django import forms
