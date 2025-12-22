@@ -88,6 +88,7 @@ class Migration(migrations.Migration):
                 ('event_type', models.CharField(choices=[('enter', 'Enter'), ('exit', 'Exit')], max_length=10)),
                 ('occurred_at', models.DateTimeField(auto_now_add=True)),
                 ('geofence', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='agency.geofence')),
+                ('tour_guide', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='geofence_events', to='accounts.tourguide')),
                 ('traveler', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='geofence_events', to='accounts.traveler')),
             ],
             options={
