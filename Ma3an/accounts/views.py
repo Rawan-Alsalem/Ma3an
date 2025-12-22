@@ -89,7 +89,7 @@ def signup_traveler_view(request):
         user_form = UserForm()
         traveler_form = TravelerForm()
 
-    return render(request, "accounts/signup_traveler.html", {
+    return render(request, "accounts/traveler_signup.html", {
         "user_form": user_form,
         "traveler_form": traveler_form,
         "countries": countries,
@@ -225,37 +225,33 @@ def tourguide_profile_view(request):
 #     return ''.join(random.choice(letters) for i in range(length))
 
 
-def create_tourguide_view(request : HttpRequest):
+def create_tourguide_view(request: HttpRequest):
 
-    countries = [(c.alpha_2, c.name) for c in pycountry.countries]
-    languages_list = Language.objects.all()
+    # if not request.user.is_authenticated or request.user.role != "agency":
+    #     messages.error(request, "Only agencies can create tour guides.")
+    #     return redirect("accounts:signin_view")
 
     if request.method == "POST":
-        temp_password = get_random_string(10)
+        email = request.POST["email"]
+        password = request.POST["password"]
 
         user = User.objects.create_user(
-            email=request.POST["email"],
-            username=request.POST["email"],
-            password=temp_password,
+            email=email,
+            username=email,
+            password=password,
             role="tourGuide"
         )
 
-        tour_guide = TourGuide.objects.create(
+        TourGuide.objects.create(
             user=user,
             agency=request.user.agency_profile,
             is_active=True
         )
 
-        messages.success(
-            request,
-            "Tour guide created successfully. Login details sent by email."
-        )
+        messages.success(request, "Tour guide created successfully.")
         return redirect("agency:dashboard")
 
-    return render(request, "accounts/create_tourguide.html", {
-        "countries": countries,
-        "languages": languages_list,
-    })
+    return render(request, "accounts/create_tourguide.html")
 
         
         
