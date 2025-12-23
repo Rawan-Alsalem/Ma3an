@@ -1,4 +1,4 @@
-import stripe
+#import stripe
 import json
 import requests
 from django.http import JsonResponse
@@ -16,7 +16,7 @@ from traveler.services.active_tour import get_active_join
 from traveler.services.location_service import save_traveler_location
 from traveler.services.geofence_service import check_geofences_and_notify_users
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+#stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def traveler_required(view_func):
     return user_passes_test(lambda u: hasattr(u, "traveler"))(view_func)

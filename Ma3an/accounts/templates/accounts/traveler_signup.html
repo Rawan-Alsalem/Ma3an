@@ -1,14 +1,17 @@
 {% extends "main/base.html" %}
 {% load static %}
 
+{% block title %}Traveler Signup{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
+
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Sign Up</h2>
-                    <form action="{% url 'accounts:signup_traveler' %}" method="post" enctype="multipart/form-data">
+                    <form action="{% url 'accounts:traveler_signup' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         
                         <div class="mb-3">
