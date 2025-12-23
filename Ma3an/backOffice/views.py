@@ -188,7 +188,7 @@ def edit_subscription(request, sub_id):
 
 @login_required(login_url="/admin/login/")
 @admin_only
-@require_POST
+# @require_POST
 def renew_subscription(request, sub_id):
     sub = get_object_or_404(AgencySubscription, id=sub_id)
 

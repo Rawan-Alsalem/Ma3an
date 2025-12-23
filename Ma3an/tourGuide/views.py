@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from accounts.models import Agency, TourGuide
+from accounts.models import Agency, TourGuide, Traveler
 from django.contrib import messages
 from agency.models import Tour
 # Create your views here.
@@ -59,3 +59,21 @@ def my_tours_view(request):
     return render(request, 'tourguide/my_tours.html', context)
 
 
+def tour_details_view(request, tour_id):
+    # نتأكد أنه Tour Guide
+    if request.user.role != 'tourGuide':
+        return redirect('accounts:profile')  # أو أي صفحة مناسبة
+
+    # جلب التور المرتبط بالمرشد الحالي
+    tour = get_object_or_404(Tour, id=tour_id, tour_guide__user=request.user)
+
+    # قائمة المسافرين المرتبطين بالرحلة
+    travelers = Traveler.objects.filter(tour__id=tour.id)  # إذا عندك علاقة ManyToMany أو ForeignKey
+
+    context = {
+        'tour': tour,
+        'travelers': travelers,
+        'today': date.today(),
+    }
+
+    return render(request, 'tourguide/tour_detail.html', context)
