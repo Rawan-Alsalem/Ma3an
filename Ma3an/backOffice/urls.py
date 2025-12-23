@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = "backOffice"
@@ -11,5 +12,7 @@ urlpatterns = [
     path("agencies/reject/<int:agency_id>/", views.reject_agency, name="reject_agency"),
     path("subscriptions/", views.manage_subscriptions, name="manage_subscriptions"),
     path("users/", views.users_list, name="users_list"),
-    path("security/", views.system_security, name="system_security"),
+    path("subscriptions/edit/<int:sub_id>/", views.edit_subscription, name="edit_subscription"),
+    path("subscriptions/renew/<int:sub_id>/", views.renew_subscription, name="renew_subscription"),
+    path("logout/", auth_views.LogoutView.as_view(next_page="/admin/login/"), name="logout"),
 ]

@@ -1,78 +1,249 @@
+<!-- backOffice/templates/backOffice/base.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ma3an BackOffice</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Ma3an BackOffice{% endblock %}</title>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'backOffice/images/admin-favicon.svg' %}">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e7eaf2;
+      --soft: #f1f5f9;
+      --brand: #2563eb;
+      --brand-soft: rgba(37,99,235,.12);
+    }
+
+    body { background: var(--bg); color: var(--text); }
+    .app-shell { min-height: 100vh; }
+
+    .topbar {
+      background: rgba(255,255,255,.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+    }
+
+    .nav-pill{
+      color: var(--text);
+      border-radius: 12px;
+      padding: .65rem .75rem;
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+      text-decoration: none;
+    }
+    .nav-pill:hover{
+      background: var(--soft);
+      color: var(--text);
+    }
+    .nav-pill.active{
+      background: var(--brand-soft);
+      border: 1px solid rgba(37,99,235,.18);
+      color: var(--brand);
+      font-weight: 600;
+    }
+
+    .card, .modal-content{
+      background: var(--card) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text);
+      border-radius: 16px;
+    }
+
+    .card-header{
+      background: #ffffff !important;
+      border-bottom: 1px solid var(--border) !important;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .text-muted{ color: var(--muted) !important; }
+
+    .form-control, .form-select{
+      background: #ffffff !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      border-radius: 12px;
+    }
+    .form-control::placeholder{ color: rgba(100,116,139,.75); }
+
+    .table{
+      color: var(--text);
+    }
+    .table thead th{
+      color: #334155;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: .9rem;
+    }
+    .table td, .table th{
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .badge-soft{
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .btn-outline-light{
+      border-color: var(--border);
+      color: var(--text);
+      background: #fff;
+    }
+    .btn-outline-light:hover{
+      background: var(--soft);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .page-title{ font-weight: 800; letter-spacing: .2px; }
+
+    .kpi{
+      border-radius: 18px;
+      border: 1px solid var(--border);
+    }
+    .kpi .icon{
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      display:flex; align-items:center; justify-content:center;
+      background: var(--brand-soft);
+      border: 1px solid rgba(37,99,235,.18);
+      color: var(--brand);
+    }
+
+    .shadow-sm{
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .06) !important;
+    }
+    button.nav-pill { cursor: pointer; }
+    button.nav-pill:focus { outline: none; }
+  </style>
 </head>
+
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#">Ma3an Admin</a>
-    <div class="ms-auto text-white">Admin User</div>
-</nav>
-
-<div class="container-fluid">
-    <div class="row">
-        <aside class="col-md-2 bg-light vh-100 p-3">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a href="{% url 'backOffice:dashboard' %}" class="nav-link">Dashboard</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:manage_agencies' %}" class="nav-link">Agencies</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:manage_subscriptions' %}" class="nav-link">Subscriptions</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:users_list' %}" class="nav-link">Users</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:system_security' %}" class="nav-link">Security</a></li>
-            </ul>
-        </aside>
-
-        <main class="col-md-10 p-4">
-            {% block content %}{% endblock %}
-        </main>
+<div class="app-shell d-flex">
+  <aside class="sidebar d-none d-lg-block p-3" style="width: 280px;">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="icon" style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--brand-soft);border:1px solid rgba(37,99,235,.18);color:var(--brand);">
+        <i class="bi bi-compass-fill"></i>
+      </div>
+      <div>
+        <div class="fw-bold">Ma3an BackOffice</div>
+        <div class="small text-muted">Admin console</div>
+      </div>
     </div>
+
+    {% with current=request.resolver_match.url_name %}
+    <div class="d-grid gap-2">
+      <a class="nav-pill {% if current == 'dashboard' %}active{% endif %}" href="{% url 'backOffice:dashboard' %}">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </a>
+      <a class="nav-pill {% if current == 'manage_agencies' or current == 'agency_detail' %}active{% endif %}" href="{% url 'backOffice:manage_agencies' %}">
+        <i class="bi bi-building"></i> Agencies
+      </a>
+      <a class="nav-pill {% if current == 'manage_subscriptions' or current == 'edit_subscription' %}active{% endif %}" href="{% url 'backOffice:manage_subscriptions' %}">
+        <i class="bi bi-credit-card-2-front"></i> Subscriptions
+      </a>
+      <a class="nav-pill {% if current == 'users_list' %}active{% endif %}" href="{% url 'backOffice:users_list' %}">
+        <i class="bi bi-people"></i> Users
+      </a>
+
+      <div class="mt-3 small text-muted">Admin</div>
+      <a class="nav-pill" href="/admin/" target="_blank">
+        <i class="bi bi-shield-lock"></i> Django admin
+      </a>
+     <form method="post" action="{% url 'backOffice:logout' %}" class="m-0">
+      {% csrf_token %}
+      <button type="submit" class="nav-pill w-100 text-start border-0 bg-transparent">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </form>
+
+    </div>
+    {% endwith %}
+  </aside>
+
+  <div class="flex-grow-1">
+    <nav class="topbar navbar px-3 px-lg-4">
+      <div class="d-flex align-items-center gap-3 w-100">
+        <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <a class="navbar-brand fw-bold mb-0" style="color: var(--text);" href="{% url 'backOffice:dashboard' %}">
+          Ma3an
+        </a>
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <span class="badge badge-soft">
+            {% if request.user.is_authenticated %}
+              {{ request.user.username }}
+            {% else %}
+              Admin
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-fluid px-3 px-lg-4 py-4">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar" style="background:#fff;">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Ma3an BackOffice</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    {% with current=request.resolver_match.url_name %}
+    <div class="d-grid gap-2">
+      <a class="nav-pill {% if current == 'dashboard' %}active{% endif %}" href="{% url 'backOffice:dashboard' %}">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </a>
+      <a class="nav-pill {% if current == 'manage_agencies' or current == 'agency_detail' %}active{% endif %}" href="{% url 'backOffice:manage_agencies' %}">
+        <i class="bi bi-building"></i> Agencies
+      </a>
+      <a class="nav-pill {% if current == 'manage_subscriptions' or current == 'edit_subscription' %}active{% endif %}" href="{% url 'backOffice:manage_subscriptions' %}">
+        <i class="bi bi-credit-card-2-front"></i> Manage subscriptions
+      </a>
+      <a class="nav-pill {% if current == 'users_list' %}active{% endif %}" href="{% url 'backOffice:users_list' %}">
+        <i class="bi bi-people"></i> Users
+      </a>
+      <hr class="opacity-25">
+      <a class="nav-pill" href="/admin/" target="_blank"><i class="bi bi-shield-lock"></i> Django admin</a>
+      <form method="post" action="{% url 'backOffice:logout' %}" class="m-0">
+        {% csrf_token %}
+        <button type="submit" class="nav-pill w-100 text-start border-0 bg-transparent">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </form>
+
+    </div>
+    {% endwith %}
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
-a<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Ma3an BackOffice</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="{% url 'backOffice:dashboard' %}">Ma3an Admin</a>
-    <div class="ms-auto text-white">
-        {% if request.user.is_authenticated %}
-            {{ request.user.username }}
-        {% else %}
-            Guest
-        {% endif %}
-    </div>
-</nav>
-
-<div class="container-fluid">
-    <div class="row">
-        <aside class="col-md-2 bg-light vh-100 p-3">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a href="{% url 'backOffice:dashboard' %}" class="nav-link">Dashboard</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:manage_agencies' %}" class="nav-link">Agencies</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:manage_subscriptions' %}" class="nav-link">Subscriptions</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:users_list' %}" class="nav-link">Users</a></li>
-                <li class="nav-item"><a href="{% url 'backOffice:system_security' %}" class="nav-link">Security</a></li>
-            </ul>
-        </aside>
-
-        <main class="col-md-10 p-4">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

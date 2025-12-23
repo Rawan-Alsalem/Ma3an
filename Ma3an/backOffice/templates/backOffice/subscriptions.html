@@ -1,39 +1,47 @@
+<!-- backOffice/templates/backOffice/subscriptions.html -->
 {% extends 'backOffice/base.html' %}
+{% block title %}Subscription Plans{% endblock %}
+
 {% block content %}
 
-<h3 class="mb-4">Subscriptions</h3>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <div class="page-title h3 mb-1">Subscription Plans</div>
+    <div class="text-muted">Reference list of available plans</div>
+  </div>
+</div>
 
-<div class="card shadow">
-    <div class="card-body">
-        {% if subscriptions %}
-            <div class="table-responsive">
-                <table class="table align-middle table-hover">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Price</th>
-                            <th>Tours limit</th>
-                            <th>Supervisors limit</th>
-                            <th>Travelers limit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for s in subscriptions %}
-                            <tr>
-                                <td>{{ s.subscriptionType }}</td>
-                                <td>{{ s.price }}</td>
-                                <td>{{ s.tours_limit|default:"-" }}</td>
-                                <td>{{ s.supervisors_limit|default:"-" }}</td>
-                                <td>{{ s.travelers_limit|default:"-" }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p class="text-muted mb-0">No subscriptions found.</p>
-        {% endif %}
-    </div>
+<div class="card shadow-sm">
+  <div class="card-body">
+    {% if subscriptions %}
+      <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Tours limit</th>
+              <th>Supervisors limit</th>
+              <th>Travelers limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in subscriptions %}
+              <tr>
+                <td><span class="badge badge-soft">{{ s.subscriptionType }}</span></td>
+                <td class="fw-semibold">{{ s.price }}</td>
+                <td>{{ s.tours_limit|default:"-" }}</td>
+                <td>{{ s.supervisors_limit|default:"-" }}</td>
+                <td>{{ s.travelers_limit|default:"-" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-muted">No plans found.</div>
+    {% endif %}
+  </div>
 </div>
 
 {% endblock %}

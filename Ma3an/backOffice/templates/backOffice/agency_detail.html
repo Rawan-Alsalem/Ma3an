@@ -1,78 +1,72 @@
+<!-- backOffice/templates/backOffice/agency_detail.html -->
 {% extends 'backOffice/base.html' %}
+{% block title %}Agency Details{% endblock %}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">Agency Details</h3>
-    <a href="{% url 'backOffice:manage_agencies' %}" class="btn btn-outline-secondary">Back</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <div class="page-title h3 mb-1">Agency Details</div>
+    <div class="text-muted">{{ agency.agency_name|default:"Agency" }}</div>
+  </div>
+  <a href="{% url 'backOffice:manage_agencies' %}" class="btn btn-outline-light">
+    <i class="bi bi-arrow-left me-1"></i> Back
+  </a>
 </div>
 
-<div class="card shadow">
-    <div class="card-body">
-        <h4 class="mb-3">{{ agency.agency_name|default:"Agency" }}</h4>
-
-        <div class="row g-3">
-
-            <div class="col-md-6">
-                <div class="border rounded p-3">
-                    <div class="text-muted">Commercial License</div>
-                    <div class="fw-semibold">{{ agency.commercial_license|default:"-" }}</div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="border rounded p-3">
-                    <div class="text-muted">Owner</div>
-                    <div class="fw-semibold">
-                        {% if agency.user %}
-                            {{ agency.user.username }}{% if agency.user.email %} ({{ agency.user.email }}){% endif %}
-                        {% else %}
-                            Not available
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="border rounded p-3">
-                    <div class="text-muted">City</div>
-                    <div class="fw-semibold">{{ agency.city|default:"-" }}</div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="border rounded p-3">
-                    <div class="text-muted">Status</div>
-                    <div class="fw-semibold">
-                        {% if agency.approval_status == 'approved' %}
-                            Approved
-                        {% elif agency.approval_status == 'rejected' %}
-                            Rejected
-                        {% else %}
-                            Pending
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="border rounded p-3">
-                    <div class="text-muted">Phone</div>
-                    <div class="fw-semibold">{{ agency.phone_number|default:"-" }}</div>
-                </div>
-            </div>
-
-            {% if agency.approval_status == 'rejected' and agency.rejection_reason %}
-                <div class="col-12">
-                    <div class="border rounded p-3">
-                        <div class="text-muted">Rejection reason</div>
-                        <div class="fw-semibold">{{ agency.rejection_reason }}</div>
-                    </div>
-                </div>
-            {% endif %}
-
+<div class="card shadow-sm">
+  <div class="card-body">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+      <div>
+        <div class="h4 mb-1">{{ agency.agency_name|default:"Agency" }}</div>
+        <div class="text-muted small">
+          Owner: {{ agency.user.username|default:"-" }}{% if agency.user.email %} · {{ agency.user.email }}{% endif %}
         </div>
+      </div>
+
+      <div>
+        {% if agency.approval_status == 'approved' %}
+          <span class="badge bg-success"><i class="bi bi-check2-circle me-1"></i>Approved</span>
+        {% elif agency.approval_status == 'rejected' %}
+          <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+        {% else %}
+          <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+        {% endif %}
+      </div>
     </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-6">
+        <div class="p-3 rounded border" style="border-color: rgba(255,255,255,.08) !important;">
+          <div class="text-muted small">Commercial license</div>
+          <div class="fw-semibold">{{ agency.commercial_license|default:"-" }}</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="p-3 rounded border" style="border-color: rgba(255,255,255,.08) !important;">
+          <div class="text-muted small">City</div>
+          <div class="fw-semibold">{{ agency.city|default:"-" }}</div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="p-3 rounded border" style="border-color: rgba(255,255,255,.08) !important;">
+          <div class="text-muted small">Phone</div>
+          <div class="fw-semibold">{{ agency.phone_number|default:"-" }}</div>
+        </div>
+      </div>
+
+      {% if agency.approval_status == 'rejected' and agency.rejection_reason %}
+        <div class="col-12">
+          <div class="p-3 rounded border" style="border-color: rgba(255,255,255,.08) !important;">
+            <div class="text-muted small">Rejection reason</div>
+            <div class="fw-semibold">{{ agency.rejection_reason }}</div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 </div>
 
 {% endblock %}

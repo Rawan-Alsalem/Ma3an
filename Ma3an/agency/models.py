@@ -1,6 +1,10 @@
 from django.db import models
 from accounts.models import Agency
 
+# New import added for AgencySubscription model
+from django.utils import timezone
+
+
 
 class Tour(models.Model):
     name = models.CharField(max_length=200)
@@ -135,3 +139,34 @@ class AgencyPayment(models.Model):
 
     def __str__(self):
         return f"{self.agency} - {self.subscription} - {self.status}"
+
+
+
+# New Model added for manage subscription in backoffice app
+class AgencySubscription(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = "active", "Active"
+        EXPIRED = "expired", "Expired"
+        CANCELED = "canceled", "Canceled"
+
+    agency = models.OneToOneField(
+        Agency,
+        on_delete=models.CASCADE,
+        related_name="subscription"
+    )
+    plan = models.ForeignKey(
+        "agency.Subscription",
+        on_delete=models.PROTECT,
+        related_name="agency_subscriptions"
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ACTIVE
+    )
+    start_date = models.DateField(default=timezone.localdate)
+    expiry_date = models.DateField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.agency.agency_name} -> {self.plan.subscriptionType}"

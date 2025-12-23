@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- background -->
+  <rect width="100" height="100" rx="22" fill="#2563eb"/>
+
+  <!-- inner panel -->
+  <rect x="22" y="22" width="56" height="56" rx="12" fill="white"/>
+
+  <!-- check mark -->
+  <path d="M40 54l6 6 14-16"
+        fill="none"
+        stroke="#2563eb"
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>
