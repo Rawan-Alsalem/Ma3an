@@ -70,9 +70,9 @@ def subscription_view(request):
     current_subscription = None
     amount_paid = None
 
-    if agency and agency.subscription:
-        # إذا عنده اشتراك، نجيب بيانات الدفع الأخير
-        current_subscription = agency.subscription
+    if agency and agency.current_subscription:
+            # إذا عنده اشتراك، نجيب بيانات الدفع الأخير
+        current_subscription = agency.current_subscription
         last_payment = AgencyPayment.objects.filter(
             agency=agency,
             subscription=current_subscription,
@@ -107,7 +107,7 @@ def agency_payment_view(request):
 @login_required
 def add_tour_view(request):
     agency = request.user.agency_profile
-    plan = agency.subscription
+    plan = agency.current_subscription
 
     # 1. Check if agency has a subscription
     if not plan:
@@ -394,7 +394,8 @@ def select_subscription_view(request, subscription_id):
             # ⚠️ خطة التجربة المحلية: تفعيل الباقة فوراً في قاعدة البيانات
             # أضفنا هذا الجزء لكي ترى النتيجة في موقعك دون انتظار الـ Callback
             # ========================================================
-            agency.subscription = subscription  # ربط الوكالة بالباقة
+            agency.current_subscription = subscription
+              # ربط الوكالة بالباقة
             agency.save()                       # حفظ في قاعدة البيانات
             
             payment.status = "paid"             # تحديث حالة الدفع محلياً للتجربة
@@ -459,7 +460,7 @@ def subscription_callback_view(request):
         if payment.status == 'paid':
             agency = payment.agency
             # تحديث باقة الوكالة
-            agency.subscription = payment.subscription
+            agency.current_subscription = payment.subscription
             agency.save()
             
             #  هنا أيضاً إضافة تاريخ انتهاء الاشتراك (مثلاً بعد 30 يوم)

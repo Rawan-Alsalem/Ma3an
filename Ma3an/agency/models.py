@@ -1,5 +1,4 @@
 from django.db import models
-from accounts.models import Agency
 
 # New import added for AgencySubscription model
 from django.utils import timezone
@@ -7,11 +6,7 @@ from django.utils import timezone
 
 
 class Tour(models.Model):
-    agency = models.ForeignKey(
-    "accounts.Agency",  # <- هنا نصية بدل استيراد مباشر
-    on_delete=models.CASCADE,
-    related_name="tours"
-)
+    agency = models.ForeignKey("accounts.Agency", on_delete=models.CASCADE, related_name="tours")
 
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -174,9 +169,9 @@ class AgencySubscription(models.Model):
         CANCELED = "canceled", "Canceled"
 
     agency = models.OneToOneField(
-        Agency,
-        on_delete=models.CASCADE,
-        related_name="subscription"
+        "accounts.Agency", # نصياً هنا
+        on_delete=models.CASCADE, 
+        related_name="subscription_record" # غيري الاسم لـ subscription_record
     )
     plan = models.ForeignKey(
         "agency.Subscription",
