@@ -91,7 +91,7 @@ def create_tourguide_view(request: HttpRequest):
             )
 
             messages.success(request, "Tour guide created successfully.")
-            return redirect("main:home_view")
+            return redirect("tourGuide:all_tourguides")
     else:
         form = TourGuideCreateForm()
 
