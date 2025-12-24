@@ -15,6 +15,8 @@ from accounts.models import TourGuide
 from django.db.models import Sum
 from traveler.models import TravelerPayment # استيراد موديل الدفع من تطبيق ترافل
 from datetime import date, datetime
+from decimal import Decimal
+
 # -------------------------
 # Agency Views
 # -------------------------
@@ -409,7 +411,6 @@ def all_tours_view(request):
             Q(agency__agency_name__icontains=query)
         )
 
-    from decimal import Decimal
 
     # ===== فلترة الوجهة =====
     destination = request.GET.get('destination')
