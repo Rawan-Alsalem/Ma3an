@@ -11,7 +11,7 @@
         background: #ffffff;
         border-radius: 25px;
         padding: 30px;
-        border: 1px solid rgba(0,0,0,0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         position: sticky;
         top: 20px;
     }
@@ -63,7 +63,8 @@
         display: block;
         font-size: 1.5rem;
         font-weight: 900;
-        color: #198754; /* لون أخضر رسمي */
+        color: #198754;
+        /* لون أخضر رسمي */
     }
 
     .price-currency {
@@ -79,18 +80,31 @@
             <div class="detail-card shadow-sm mb-4">
                 <div class="detail-image-wrapper">
                     {% if tour.image %}
-                        <img src="{{ tour.image.url }}" class="img-main" alt="{{ tour.name }}">
+                    <img src="{{ tour.image.url }}" class="img-main" alt="{{ tour.name }}">
                     {% else %}
-                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200" class="img-main">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200" class="img-main">
                     {% endif %}
                 </div>
-                
+
                 <div class="p-4">
                     <h2 class="fw-bold mb-1">{{ tour.name }}</h2>
-                    <p class="text-muted mb-3"><i class="fas fa-building me-1"></i> Agency: {{ tour.agency.agency_name }}</p>
+                    <p class="text-muted mb-3"><i class="fas fa-building me-1"></i> Agency: {{ tour.agency.agency_name}}</p>
+
+                    {% if tour.tour_guide %}
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-user-tie me-1"></i>
+                        Tour Guide: {{ tour.tour_guide.user.first_name }} {{ tour.tour_guide.user.last_name }}
+                    </p>
+                    {% else %}
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-user-slash me-1"></i>
+                        Tour Guide: Not assigned yet
+                    </p>
+                    {% endif %}
 
                     <div class="d-flex gap-3 mb-4 text-muted">
-                        <span><i class="fas fa-map-marker-alt text-primary me-1"></i> {{ tour.city }}, {{ tour.country }}</span>
+                        <span><i class="fas fa-map-marker-alt text-primary me-1"></i> {{ tour.city }}, {{ tour.country
+                            }}</span>
                         <span><i class="fas fa-users text-primary me-1"></i> {{ tour.travelers }} Travelers</span>
                     </div>
                     <h5 class="fw-bold">Description</h5>
@@ -99,34 +113,34 @@
             </div>
 
             <h4 class="fw-bold mb-4 mt-5"><i class="far fa-map me-2"></i>Tour Itinerary</h4>
-            
+
             <div class="modern-timeline">
                 {% regroup schedules by day_number as schedules_by_day %}
                 {% for day in schedules_by_day %}
-                    <div class="timeline-day-header">
-                        <span class="day-label">Day {{ day.grouper }}</span>
-                    </div>
-                    {% for schedule in day.list %}
-                        <div class="timeline-event">
-                            <div class="timeline-line"></div>
-                            <div class="timeline-dot"></div>
-                            <div class="timeline-content-card shadow-sm">
-                                <div class="event-time">
-                                    <i class="far fa-clock me-1"></i> {{ schedule.start_time }} - {{ schedule.end_time }}
-                                </div>
-                                <div class="event-details">
-                                    <h6 class="fw-bold text-dark mb-1">{{ schedule.activity_title }}</h6>
-                                    <p class="text-muted small mb-2">{{ schedule.description }}</p>
-                                    <div class="event-location">
-                                        <i class="fas fa-map-marker-alt me-1"></i> {{ schedule.location_name }}
-                                        {% if schedule.location_url %}
-                                            <a href="{{ schedule.location_url }}" target="_blank" class="map-link">View Map</a>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                <div class="timeline-day-header">
+                    <span class="day-label">Day {{ day.grouper }}</span>
+                </div>
+                {% for schedule in day.list %}
+                <div class="timeline-event">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content-card shadow-sm">
+                        <div class="event-time">
+                            <i class="far fa-clock me-1"></i> {{ schedule.start_time }} - {{ schedule.end_time }}
+                        </div>
+                        <div class="event-details">
+                            <h6 class="fw-bold text-dark mb-1">{{ schedule.activity_title }}</h6>
+                            <p class="text-muted small mb-2">{{ schedule.description }}</p>
+                            <div class="event-location">
+                                <i class="fas fa-map-marker-alt me-1"></i> {{ schedule.location_name }}
+                                {% if schedule.location_url %}
+                                <a href="{{ schedule.location_url }}" target="_blank" class="map-link">View Map</a>
+                                {% endif %}
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
                 {% endfor %}
             </div>
         </div>
@@ -136,7 +150,7 @@
                 <div class="summary-title">
                     <i class="fas fa-clipboard-list text-primary"></i> Review Summary
                 </div>
-                
+
                 <div class="summary-item">
                     <span class="summary-label"><i class="far fa-calendar-alt me-1"></i> Departure</span>
                     <span class="summary-value">{{ tour.start_date }}</span>

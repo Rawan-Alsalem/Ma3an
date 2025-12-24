@@ -24,4 +24,4 @@ class TourScheduleAdmin(admin.ModelAdmin):
 admin.site.register(Subscription)
 admin.site.register(AgencyPayment)
 admin.site.register(Tour)
-admin.site.register(TourSchedule)
+# admin.site.register(TourSchedule)
