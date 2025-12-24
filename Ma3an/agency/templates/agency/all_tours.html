@@ -145,32 +145,59 @@
                     {{ item.tour.price }} SAR
                 </div>
 
-                <div class="badge-duration">
-                    <i class="far fa-clock me-1"></i> {{ item.duration|default:"0" }} Days
+        <div class="tours-grid">
+            {% for tour in page_obj %}
+            <div class="tour-card">
+                <div class="tour-image">
+                    {% if tour.image %}
+                        <img src="{{ tour.image.url }}" alt="{{ tour.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ tour.name }}">
+                    {% endif %}                  
+                                        
                 </div>
-
-                <div class="inner-content">
-                    <h3 class="t-name text-truncate">{{ item.tour.name }}</h3>
-                    <div class="t-city mb-3" style="font-size: 0.85rem; opacity: 0.9;">
-                        <i class="fas fa-location-dot me-1"></i> {{ item.tour.city }}
+                <div class="tour-content">
+                    <h3 class="tour-title">{{tour.name }}</h3>
+                    <div class="tour-meta">
+                        <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ tour.city }}, {{ tour.country }}</span></div>
+                        <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ tour.duration }} day{% if tour.duration > 1 %}s{% endif %}</span></div>
+                        <!-- Rating -->
+                        <div class="rating">
+                            {% with avg=tour.avg_rating|default:0 %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg %}
+                                        <span class="star filled">★</span>
+                                    {% else %}
+                                        <span class="star">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        
+                            <small class="reviews-count">
+                                ({{ tour.reviews_count }})
+                            </small>
+                        </div>
                     </div>
-
-                    <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-main-white">
-                        View Details
-                    </a>
-
-                    {% if item.tour.agency.user == user %}
-                    <div class="admin-tools">
-                        <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn-admin-tool">
-                            <i class="fas fa-edit me-1"></i> Edit
-                        </a>
-                        <form action="{% url 'agency:delete_tour' item.tour.id %}" method="POST" class="flex-grow-1">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-admin-tool w-100 bg-transparent border-0" onclick="return confirm('Delete this tour?')">
-                                <i class="fas fa-trash-alt me-1"></i> Delete
-                            </button>
-                        </form>
+                    <div class="price-section">
+                        <div class="tour-price">{{ tour.price }} SAR<span class="person-price">/ person</span></div>
                     </div>
+                    <div class="action-buttons">
+                    {% if user.is_authenticated %}
+
+                        <!-- Traveler -->
+                        {% if user.role == 'traveler' %}
+                        <a href="{% url 'traveler:traveler_tour_detail_view' tour.id %}" class="btn-book">Details</a>
+                        <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ tour.id }}" class="pay-link"><button class="pay-btn">Pay Now</button></a>
+                        {% endif %}
+
+                
+                        <!-- Agency -->
+                        {% if user.role == 'agency' %}
+                        <a href="{% url 'agency:edit_tour' tour.id %}" class="btn-secondary-action">Edit</a>
+                        <a href="{% url 'agency:delete_tour' tour.id %}" class="btn-secondary-action">Delete</a>
+                        <a href="{% url 'agency:tour_detail' tour.id %}" class="btn-book">Details</a>
+                        {% endif %}
+
                     {% endif %}
                 </div>
             </div> 
@@ -179,7 +206,25 @@
         <div class="text-center w-100 py-5">
             <p class="text-muted">No tours available.</p>
         </div>
-        {% endfor %}
-    </div>
+        <div class="pagination-wrapper">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|cut:'page=' }}"
+                 class="page-btn">‹</a>
+            {% endif %}
+          
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+              {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                <a href="?page={{ num }}&{{ request.GET.urlencode|cut:'page=' }}"
+                   class="page-btn">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+          
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|cut:'page=' }}"
+                 class="page-btn">›</a>
+            {% endif %}
+          </div>
 </div>
 {% endblock %}
