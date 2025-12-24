@@ -1,8 +1,8 @@
 from django import forms
+from .models import Announcement
 
-class TourAnnouncementForm(forms.Form):
-    message = forms.CharField(
-        widget=forms.Textarea(attrs={'placeholder': 'Type your announcement here...', 'rows': 3}),
-        label='Announcement',
-        max_length=1000
-    )
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ["title", "message"]
+

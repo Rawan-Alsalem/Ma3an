@@ -71,7 +71,6 @@ class Agency(models.Model):
         choices=ApprovalStatus.choices,
         default=ApprovalStatus.PENDING
     )
-        # ربط الوكالة بالباقة الحالية (Subscription)
     current_subscription = models.ForeignKey(
         "agency.Subscription", 
         on_delete=models.SET_NULL, 
@@ -79,7 +78,6 @@ class Agency(models.Model):
         blank=True, 
         related_name="agency_profiles" 
     )
-      # subscription = models.ForeignKey("agency.Subscription", on_delete=models.SET_NULL, null=True, blank=True)
     rejection_reason = models.TextField(null=True, blank=True)
 
 

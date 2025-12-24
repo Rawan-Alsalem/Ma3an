@@ -1,12 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
 from accounts.models import Agency, TourGuide, Traveler
 from django.contrib import messages
 from agency.models import Tour
 from datetime import date
-from django.core.mail import send_mass_mail
-from .forms import TourAnnouncementForm
+# from django.core.mail import send_mass_mail
+from django.core.mail import send_mail
+from django.conf import settings
+
+from .models import Announcement
+from .forms import AnnouncementForm
+from traveler.models import TravelerPayment
+
+from django.utils.timezone import now
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
 # Create your views here.
 
 
@@ -100,35 +109,94 @@ def tourguide_dashboard_view(request):
 
 
 
-@login_required
-def send_announcement_view(request, tour_id):
-    from main.models import Tour
+# @login_required
+# def send_announcement_view(request, tour_id):
+#     from main.models import Tour
 
-    try:
-        tour = Tour.objects.get(id=tour_id, tour_guide__user=request.user)
-    except Tour.DoesNotExist:
-        messages.error(request, "Tour not found or you are not authorized.")
-        return redirect('tourGuide:dashboard')
+#     try:
+#         tour = Tour.objects.get(id=tour_id, tour_guide__user=request.user)
+#     except Tour.DoesNotExist:
+#         messages.error(request, "Tour not found or you are not authorized.")
+#         return redirect('tourGuide:dashboard')
+
+#     if request.method == "POST":
+#         form = TourAnnouncementForm(request.POST)
+#         if form.is_valid():
+#             message = form.cleaned_data['message']
+
+#             # جلب الإيميلات لكل المسجلين في الرحلة
+#             recipients = tour.travelers_set.all()  # استبدلها حسب العلاقة الصحيحة للمسجلين
+#             emails = [traveler.user.email for traveler in recipients if traveler.user.email]
+
+#             # إعداد الرسائل الجماعية
+#             subject = f"Announcement for Tour: {tour.name}"
+#             from_email = "no-reply@yourdomain.com"
+#             messages_to_send = [(subject, message, from_email, [email]) for email in emails]
+
+#             send_mass_mail(messages_to_send)
+
+#             messages.success(request, "✅ Announcement sent successfully.")
+#             return redirect('tourGuide:dashboard')
+#     else:
+#         form = TourAnnouncementForm()
+
+#     return render(request, 'tourGuide/send_announcement.html', {'form': form, 'tour': tour})
+
+
+
+
+
+
+def send_announcement_view(request, tour_id):
+
+    tour = get_object_or_404(Tour, id=tour_id)
 
     if request.method == "POST":
-        form = TourAnnouncementForm(request.POST)
+        form = AnnouncementForm(request.POST)
         if form.is_valid():
-            message = form.cleaned_data['message']
+            # 1️⃣ حفظ الإعلان
+            announcement = form.save(commit=False)
+            announcement.tour = tour
+            announcement.save()
 
-            # جلب الإيميلات لكل المسجلين في الرحلة
-            recipients = tour.travelers_set.all()  # استبدلها حسب العلاقة الصحيحة للمسجلين
-            emails = [traveler.user.email for traveler in recipients if traveler.user.email]
+            # 2️⃣ جلب إيميلات المسافرين المدفوعين فقط
+            emails = TravelerPayment.objects.filter(
+                tour=tour,
+                status=TravelerPayment.Status.PAID
+            ).values_list(
+                "traveler__user__email",
+                flat=True
+            ).distinct()  # لتجنب التكرار
 
-            # إعداد الرسائل الجماعية
-            subject = f"Announcement for Tour: {tour.name}"
-            from_email = "no-reply@yourdomain.com"
-            messages_to_send = [(subject, message, from_email, [email]) for email in emails]
+            # 3️⃣ إرسال الإيميل باستخدام HTML + Text Template
+            if emails:
+                context = {
+                    "title": announcement.title,
+                    "message": announcement.message,
+                    "tour": tour,
+                    "year": now().year,
+                }
 
-            send_mass_mail(messages_to_send)
+                text_content = render_to_string("emails/announcement.txt", context)
+                html_content = render_to_string("emails/announcement.html", context)
 
-            messages.success(request, "✅ Announcement sent successfully.")
-            return redirect('tourGuide:dashboard')
+                email = EmailMultiAlternatives(
+                    subject=announcement.title,
+                    body=text_content,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=list(emails),
+                )
+                email.attach_alternative(html_content, "text/html")
+                email.send()
+
+            return redirect("tour_detail", tour.id)
+
     else:
-        form = TourAnnouncementForm()
+        form = AnnouncementForm()
 
-    return render(request, 'tourGuide/send_announcement.html', {'form': form, 'tour': tour})
+    # 5️⃣ عرض الفورم
+    return render(request, "announcements/create.html", {
+        "form": form,
+        "tour": tour
+    })
+

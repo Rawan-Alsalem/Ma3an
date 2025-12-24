@@ -26,6 +26,7 @@ def traveler_signup_view(request):
                 email = request.POST["email"],
                 first_name = request.POST["first_name"],
                 last_name = request.POST["last_name"],
+                role=User.RoleChoices.TRAVELER,
             )
 
             new_user.save()
